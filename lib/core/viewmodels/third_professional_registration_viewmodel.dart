@@ -4,63 +4,29 @@ import 'package:http/http.dart' as http;
 import 'package:relier/ui/views/login_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../ui/views/third_professional_registration_view.dart';
-
-class SecondClientRegistrationViewModel extends ChangeNotifier {
-  String formatCep(String cep) {
-    if (cep.length == 8) {
-      return "${cep.substring(0, 5)}-${cep.substring(5, 8)}";
-    } else {
-      return cep;
-    }
-  }
-
-  Future<void> fetchCepData(
-      String cep,
-      void Function(Map<String, dynamic>) onSuccess,
-      void Function() onError) async {
-    final url = 'https://viacep.com.br/ws/$cep/json/';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        onSuccess(data);
-      } else {
-        onError();
-      }
-    } catch (e) {
-      onError();
-    }
-  }
-
-  void navigateToLogin(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (contextNew) => const LoginView(),
-      ),
-    );
-  }
-
-  Future<void> registerClient(
-      BuildContext context,
-      String firstName,
-      String lastName,
-      String email,
-      String contact,
-      String cpf,
-      String gender,
-      String password,
-      String logradouro,
-      String bairro,
-      String numero,
-      String cep,
-      String cidade,
-      String estado,
-      String pais,
-      String complemento) async {
+class ThirdProfessionalRegistrationViewModel extends ChangeNotifier {
+  Future<void> registerProfessional(
+    BuildContext context,
+    String firstName,
+    String lastName,
+    String email,
+    String contact,
+    String cpf,
+    String gender,
+    String password,
+    String logradouro,
+    String bairro,
+    String numero,
+    String cep,
+    String cidade,
+    String estado,
+    String pais,
+    String complemento,
+    String especialidade,
+    String tag_1,
+    String tag_2,
+    String tag_3,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final body = {
       "firstName": firstName,
@@ -77,18 +43,23 @@ class SecondClientRegistrationViewModel extends ChangeNotifier {
       "cidade": cidade,
       "estado": estado,
       "pais": pais,
-      "complemento": complemento
+      "complemento": complemento,
+      "especialidade": especialidade,
+      "tag_1": tag_1,
+      "tag_2": tag_2,
+      "tag_3": tag_3,
     };
 
     try {
       final response = await http.post(
-        Uri.parse('https://dolphin-app-4vryx.ondigitalocean.app/api/users'),
+        Uri.parse(
+            'https://dolphin-app-4vryx.ondigitalocean.app/api/profissionais'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 400 || response.statusCode == 201) {
-        await prefs.setString('userType', 'client');
+        await prefs.setString('userType', 'professional');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(

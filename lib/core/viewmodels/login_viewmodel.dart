@@ -52,7 +52,7 @@ class LoginViewModel extends ChangeNotifier {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode != 201) {
+      if (response.statusCode != 200) {
         _errorLogin = true;
       } else {
         final responseBody = jsonDecode(response.body);

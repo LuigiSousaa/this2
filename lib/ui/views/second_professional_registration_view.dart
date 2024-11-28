@@ -1,29 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:relier/core/viewmodels/professional_registration_viewmodel.dart';
+import 'package:relier/core/viewmodels/second_professional_registration_viewmodel.dart';
 
-class ProfessionalRegistrationView extends StatefulWidget {
-  const ProfessionalRegistrationView({super.key});
+class SecondProfessionalRegistrationView extends StatefulWidget {
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String contact;
+  final String cpf;
+  final String gender;
+  final String password;
+
+  const SecondProfessionalRegistrationView({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.contact,
+    required this.cpf,
+    required this.gender,
+    required this.password,
+  });
 
   @override
-  ProfessionalRegistrationViewState createState() => ProfessionalRegistrationViewState();
+  State<SecondProfessionalRegistrationView> createState() =>
+      _SecondProfessionalRegistrationViewState();
 }
 
-class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationView> {
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _contactController = TextEditingController();
-  final _cpfController = TextEditingController();
-  String gender = '';
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
+class _SecondProfessionalRegistrationViewState
+    extends State<SecondProfessionalRegistrationView> {
   final _formKey = GlobalKey<FormState>();
+  final _cepController = TextEditingController();
+  final _logradouroController = TextEditingController();
+  final _bairroController = TextEditingController();
+  final _numeroController = TextEditingController();
+  final _cidadeController = TextEditingController();
+  final _estadoController = TextEditingController();
+  final _paisController = TextEditingController();
+  final _complementoController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _cepController.addListener(_onCepChanged);
+  }
+
+  void _onCepChanged() async {
+    String cep = _cepController.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cep.length == 8) {
+      Provider.of<SecondProfessionalRegistrationViewModel>(context,
+              listen: false)
+          .fetchCepData(cep, (data) {
+        setState(() {
+          _logradouroController.text = data['logradouro'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _cidadeController.text = data['localidade'] ?? '';
+          _estadoController.text = data['estado'] ?? '';
+          _paisController.text = 'Brasil';
+          _complementoController.text = 's/';
+        });
+      }, () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Falha ao consultar o CEP',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      });
+    } else {
+      setState(() {
+        _logradouroController.text = '';
+        _bairroController.text = '';
+        _cidadeController.text = '';
+        _estadoController.text = '';
+        _paisController.text = '';
+        _complementoController.text = '';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<ProfessionalRegistrationViewModel>(context);
+    final viewModel =
+        Provider.of<SecondProfessionalRegistrationViewModel>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFF292929),
@@ -32,7 +93,7 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(height: 24),
                 Image.asset(
@@ -40,97 +101,42 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
                   height: 150,
                 ),
                 const SizedBox(height: 16),
-                // Nome
+                // Campo CEP
                 SizedBox(
-                  width: 320,
-                  height: 56,
+                  width: 300,
                   child: TextFormField(
-                    controller: _firstNameController,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Nome',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Campo obrigatório';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Sobrenome
-                SizedBox(
-                  width: 320,
-                  height: 56,
-                  child: TextFormField(
-                    controller: _lastNameController,
-                    keyboardType: TextInputType.text,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Sobrenome',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Campo obrigatório';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Email
-                SizedBox(
-                  width: 320,
-                  height: 56,
-                  child: TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Campo obrigatório';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Celular
-                SizedBox(
-                  width: 320,
-                  height: 56,
-                  child: TextFormField(
-                    controller: _contactController,
+                    controller: _cepController,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
-                    onChanged: (value) {
-                      _contactController.value = TextEditingValue(
-                        text: viewModel.formatPhone(value),
-                        selection: TextSelection.collapsed(
-                          offset: viewModel.formatPhone(value).length,
-                        ),
-                      );
-                    },
                     decoration: InputDecoration(
-                      labelText: 'Celular',
+                      labelText: 'CEP',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Campo obrigatório';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      _cepController.text = viewModel.formatCep(value);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Campo Logradouro
+                SizedBox(
+                  width: 300,
+                  child: TextFormField(
+                    controller: _logradouroController,
+                    readOnly: true,
+                    // Manter readOnly
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Logradouro',
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -145,24 +151,15 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
                   ),
                 ),
                 const SizedBox(height: 16),
-                // CPF
+                // Campo Número
                 SizedBox(
-                  width: 320,
-                  height: 56,
+                  width: 300,
                   child: TextFormField(
-                    controller: _cpfController,
+                    controller: _numeroController,
                     keyboardType: TextInputType.number,
                     style: const TextStyle(color: Colors.white),
-                    onChanged: (value) {
-                      _cpfController.value = TextEditingValue(
-                        text: viewModel.formatCPF(value),
-                        selection: TextSelection.collapsed(
-                          offset: viewModel.formatCPF(value).length,
-                        ),
-                      );
-                    },
                     decoration: InputDecoration(
-                      labelText: 'CPF',
+                      labelText: 'Número',
                       labelStyle: const TextStyle(color: Colors.white),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -177,83 +174,16 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                const SizedBox(height: 16),
-                // Gênero
+                // Campo Cidade
                 SizedBox(
-                  width: 320,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Qual seu gênero?',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: const Text(
-                                'Masculino',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 11),
-                              ),
-                              leading: Radio<String>(
-                                value: 'masculino',
-                                groupValue: gender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    gender = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: const Text(
-                                'Feminino',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 11),
-                              ),
-                              leading: Radio<String>(
-                                value: 'feminino',
-                                groupValue: gender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    gender = value!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Senha
-                SizedBox(
-                  width: 320,
-                  height: 56,
+                  width: 300,
                   child: TextFormField(
-                    controller: _passwordController,
-                    obscureText: viewModel.obscureTextPassword,
+                    controller: _cidadeController,
+                    readOnly: true,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: 'Senha',
+                      labelText: 'Cidade',
                       labelStyle: const TextStyle(color: Colors.white),
-                      suffixIcon: GestureDetector(
-                        onTap: () => viewModel.togglePasswordVisibility(),
-                        child: Icon(
-                          viewModel.obscureTextPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.white,
-                        ),
-                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -267,27 +197,16 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Confirma senha
+                // Campo Estado
                 SizedBox(
-                  width: 320,
-                  height: 56,
+                  width: 300,
                   child: TextFormField(
-                    controller: _confirmPasswordController,
-                    obscureText: viewModel.obscureTextConfirmPassword,
+                    controller: _estadoController,
+                    readOnly: true,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: 'Confirmação de senha',
+                      labelText: 'Estado',
                       labelStyle: const TextStyle(color: Colors.white),
-                      suffixIcon: GestureDetector(
-                        onTap: () =>
-                            viewModel.toggleConfirmPasswordVisibility(),
-                        child: Icon(
-                          viewModel.obscureTextConfirmPassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.white,
-                        ),
-                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -296,46 +215,96 @@ class ProfessionalRegistrationViewState extends State<ProfessionalRegistrationVi
                       if (value == null || value.isEmpty) {
                         return 'Campo obrigatório';
                       }
-                      if (_confirmPasswordController.text !=
-                          _passwordController.text) {
-                        return 'As senhas não coincidem';
-                      } else {
-                        return null;
-                      }
+                      return null;
                     },
                   ),
                 ),
-
                 const SizedBox(height: 16),
-                // Botão de continuar
+                // Campo País
                 SizedBox(
-                  width: 320,
-                  height: 56,
+                  width: 300,
+                  child: TextFormField(
+                    controller: _paisController,
+                    readOnly: true,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'País',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Campo obrigatório';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Campo Complemento
+                SizedBox(
+                  width: 300,
+                  child: TextFormField(
+                    controller: _complementoController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Complemento',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Campo obrigatório';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Botão para cadastrar
+                SizedBox(
+                  width: 300,
+                  height: 50,
                   child: ElevatedButton(
-                    onPressed: () {
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3F51B5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        viewModel.navigateToSecondRegistration(
+                        viewModel.navigateToThirdRegistration(
                           context,
-                          _firstNameController.text,
-                          _lastNameController.text,
-                          _emailController.text,
-                          _contactController.text,
-                          _cpfController.text,
-                          gender,
-                          _passwordController.text,
+                          widget.firstName,
+                          widget.lastName,
+                          widget.email,
+                          widget.contact,
+                          widget.cpf,
+                          widget.gender,
+                          widget.password,
+                          _logradouroController.text,
+                          _bairroController.text,
+                          _numeroController.text,
+                          _cepController.text,
+                          _cidadeController.text,
+                          _estadoController.text,
+                          _paisController.text,
+                          _complementoController.text,
                         );
                       }
                     },
-                    style: ButtonStyle(
-                      backgroundColor:
-                      WidgetStateProperty.all(const Color(0xFF3F51B5)),
-                      shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      )),
-                    ),
                     child: const Text(
                       'Continuar',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
