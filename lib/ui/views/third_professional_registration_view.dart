@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:relier/core/viewmodels/third_professional_registration_viewmodel.dart';
 
 class ThirdProfessionalRegistrationView extends StatefulWidget {
   final String firstName;
@@ -43,193 +43,208 @@ class ThirdProfessionalRegistrationView extends StatefulWidget {
       _ThirdProfessionalRegistrationViewState();
 }
 
-class _ThirdProfessionalRegistrationViewState
-    extends State<ThirdProfessionalRegistrationView> {
-  Map<String, List<String>> specialities = {};
-  String? selectedSpeciality;
-  List<String> tags = [];
-  String? selectedTag1;
-  String? selectedTag2;
-  String? selectedTag3;
+class _ThirdProfessionalRegistrationViewState extends State<ThirdProfessionalRegistrationView> {
 
   @override
   void initState() {
     super.initState();
-    fetchSpecialities();
-  }
-
-  Future<void> fetchSpecialities() async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-            'https://dolphin-app-4vryx.ondigitalocean.app/api/profissionais/especialidades'),
-      );
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseBody = jsonDecode(response.body);
-
-        Map<String, List<String>> parsedSpecialities = {};
-        responseBody['especialidade'].forEach((key, value) {
-          parsedSpecialities[key] = List<String>.from(value);
-        });
-
-        setState(() {
-          specialities = parsedSpecialities;
-        });
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Erro ao carregar especialidades.',
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-      );
-    }
-  }
-
-  void onSpecialitySelected(String? speciality) {
-    setState(() {
-      selectedSpeciality = speciality;
-      tags = specialities[speciality] ?? [];
-      selectedTag1 = null;
-      selectedTag2 = null;
-      selectedTag3 = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ThirdProfessionalRegistrationViewModel>(context, listen: false).fetchSpecialities(context);
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<ThirdProfessionalRegistrationViewModel>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFF292929),
       body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              Image.asset(
-                'assets/images/common/logo.png',
-                height: 150,
-              ),
-              const SizedBox(height: 16),
-              DropdownButton<String>(
+            child: viewModel.isLoading
+                ? const CircularProgressIndicator()
+                : Column(
+                children: [
+                const SizedBox(height: 24),
+            Image.asset(
+              'assets/images/common/logo.png',
+              height: 150,
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 50,
+              width: 300,
+              child: DropdownButton<String>(
                 hint: const Text(
                   "Selecione uma especialidade",
                   style: TextStyle(color: Colors.white),
                 ),
-                value: selectedSpeciality,
+                value: viewModel.selectedSpeciality,
                 isExpanded: true,
                 items: [
-                  for (var key in specialities.keys)
+                  for (var key in viewModel.specialities.keys)
                     DropdownMenuItem<String>(
                       value: key,
                       child: Text(
                         key.replaceAll('_', ' ').toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: viewModel.selectedSpeciality == key
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                     )
                 ],
-                onChanged: onSpecialitySelected,
+                onChanged: viewModel.onSpecialitySelected,
               ),
-              const SizedBox(height: 16),
-              if (tags.isNotEmpty) ...[
-                SizedBox(
-                  height: 50,
-                  width: 250,
-                  child: DropdownButton<String>(
-                    hint: const Text(
-                      "Selecione a primeira tag",
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    value: selectedTag1,
-                    isExpanded: true,
-                    items: [
-                      for (var tag in tags)
-                        DropdownMenuItem<String>(
-                          value: tag,
-                          child: Text(
-                            tag.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                    ],
-                    onChanged: (value) => setState(() {
-                      selectedTag1 = value;
-                    }),
+            ),
+            const SizedBox(height: 16),
+            if (viewModel.tags.isNotEmpty) ...[
+        SizedBox(
+        height: 50,
+        width: 300,
+        child: DropdownButton<String>(
+          hint: const Text(
+            "Selecione a primeira tag",
+            style: TextStyle(color: Colors.white),
+          ),
+          value: viewModel.selectedTag1,
+          isExpanded: true,
+          items: [
+            for (var tag in viewModel.tags)
+              DropdownMenuItem<String>(
+                value: tag,
+                child: Text(
+                  tag.replaceAll('_', ' ').toUpperCase(),
+                  style: TextStyle(
+                    color: viewModel.selectedTag1 == tag
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 50,
-                  width: 250,
-                  child: DropdownButton<String>(
-                    hint: const Text(
-                      "Selecione a segunda tag",
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    value: selectedTag2,
-                    isExpanded: true,
-                    items: [
-                      for (var tag in tags)
-                        DropdownMenuItem<String>(
-                          value: tag,
-                          child: Text(
-                            tag.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                    ],
-                    onChanged: (value) => setState(() {
-                      selectedTag2 = value;
-                    }),
+              )
+          ],
+          onChanged: viewModel.setSelectedTag1,
+        ),
+      ),
+      const SizedBox(height: 16),
+      SizedBox(
+        height: 50,
+        width: 300,
+        child: DropdownButton<String>(
+          hint: const Text(
+            "Selecione a segunda tag",
+            style: TextStyle(color: Colors.white),
+          ),
+          value: viewModel.selectedTag2,
+          isExpanded: true,
+          items: [
+            for (var tag in viewModel.tags)
+              DropdownMenuItem<String>(
+                value: tag,
+                child: Text(
+                  tag.replaceAll('_', ' ').toUpperCase(),
+                  style: TextStyle(
+                    color: viewModel.selectedTag2 == tag
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 50,
-                  width: 250,
-                  child: DropdownButton<String>(
-                    hint: const Text(
-                      "Selecione a terceira tag",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                    value: selectedTag3,
-                    isExpanded: true,
-                    items: [
-                      for (var tag in tags)
-                        DropdownMenuItem<String>(
-                          value: tag,
-                          child: Text(
-                            tag.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                    ],
-                    onChanged: (value) => setState(() {
-                      selectedTag3 = value;
-                    }),
+              ),
+          ],
+          onChanged: viewModel.setSelectedTag2,
+        ),
+      ),
+      const SizedBox(height: 16),
+      SizedBox(
+        height: 50,
+        width: 300,
+        child: DropdownButton<String>(
+          hint: const Text(
+            "Selecione a terceira tag",
+            style: TextStyle(color: Colors.white),
+          ),
+          value: viewModel.selectedTag3,
+          isExpanded: true,
+          items: [
+            for (var tag in viewModel.tags)
+              DropdownMenuItem<String>(
+                value: tag,
+                child: Text(
+                  tag.replaceAll('_', ' ').toUpperCase(),
+                  style: TextStyle(
+                    color: viewModel.selectedTag3 == tag
+                        ? Colors.white
+                        : Colors.black,
                   ),
                 ),
-                const SizedBox(height: 24),
-              ],
-            ],
+              )
+          ],
+          onChanged: viewModel.setSelectedTag3,
+        ),
+      ),
+      const SizedBox(height: 24),
+      SizedBox(
+        width: 300,
+        height: 50,
+        child: ElevatedButton(
+          onPressed: () {
+            if (viewModel.selectedSpeciality != null &&
+                viewModel.selectedTag1 != null &&
+                viewModel.selectedTag2 != null &&
+                viewModel.selectedTag3 != null) {
+
+              viewModel.registerProfessional(
+                context,
+                widget.firstName,
+                widget.lastName,
+                widget.email,
+                widget.contact,
+                widget.cpf,
+                widget.gender,
+                widget.password,
+                widget.logradouro,
+                widget.bairro,
+                widget.numero,
+                widget.cep,
+                widget.cidade,
+                widget.estado,
+                widget.pais,
+                widget.complemento,
+                viewModel.selectedSpeciality!,
+                viewModel.selectedTag1!,
+                viewModel.selectedTag2!,
+                viewModel.selectedTag3!,
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Por favor, selecione todas as opções.')));
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF3F51B5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          child: const Text(
+            'Cadastrar',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
         ),
       ),
+      const SizedBox(height: 24),
+      ],
+      ],
+    ),
+
+    ),
+    ),
     );
   }
 }

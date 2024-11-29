@@ -199,7 +199,7 @@ class ClientRegistrationViewState extends State<ClientRegistrationView> {
                                     color: Colors.white, fontSize: 11),
                               ),
                               leading: Radio<String>(
-                                value: 'masculino',
+                                value: 'Masculino',
                                 groupValue: gender,
                                 onChanged: (value) {
                                   setState(() {
@@ -217,7 +217,7 @@ class ClientRegistrationViewState extends State<ClientRegistrationView> {
                                     color: Colors.white, fontSize: 11),
                               ),
                               leading: Radio<String>(
-                                value: 'feminino',
+                                value: 'Feminino',
                                 groupValue: gender,
                                 onChanged: (value) {
                                   setState(() {

@@ -9,8 +9,9 @@ import 'package:relier/core/viewmodels/second_client_registration_viewmodel.dart
 import 'package:relier/core/viewmodels/second_professional_registration_viewmodel.dart';
 import 'package:relier/core/viewmodels/splash_viewmodel.dart';
 import 'package:relier/core/viewmodels/third_professional_registration_viewmodel.dart';
-import 'package:relier/ui/views/professional_registration_view.dart';
-import 'package:relier/ui/views/third_professional_registration_view.dart';
+import 'package:relier/core/viewmodels/user_type_viewmodel.dart';
+import 'package:relier/ui/views/splash_view.dart';
+import 'package:relier/ui/views/user_type_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,6 +37,8 @@ class MyApp extends StatelessWidget {
             create: (_) => SecondProfessionalRegistrationViewModel()),
         ChangeNotifierProvider(
             create: (_) => ThirdProfessionalRegistrationViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => UserTypeViewModel()),
       ],
       child: MaterialApp(
           title: 'Relier',
@@ -45,23 +48,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: const ThirdProfessionalRegistrationView(
-            firstName: 'Luigi',
-            lastName: 'Sousa',
-            email: 'tese@gmail.com',
-            contact: '19999999999',
-            cpf: "55555555555",
-            gender: 'masculino',
-            password: 'senha123',
-            logradouro: 'Rua 12',
-            bairro: 'x',
-            numero: '123',
-            cep: '11111111',
-            cidade: 'Limeira',
-            estado: 'Sao paulo',
-            pais: 'Brasil',
-            complemento: 'Apt',
-          )),
+          home: const UserTypeView()),
     );
   }
 }
