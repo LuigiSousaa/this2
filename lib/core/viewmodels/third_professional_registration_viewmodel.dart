@@ -62,7 +62,6 @@ class ThirdProfessionalRegistrationViewModel extends ChangeNotifier {
           ),
         ),
       );
-      print("Erro ao carregar especialidades: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -163,7 +162,6 @@ class ThirdProfessionalRegistrationViewModel extends ChangeNotifier {
           ),
         );
       } else {
-        print(response.statusCode);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(

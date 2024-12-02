@@ -1,10 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:relier/ui/views/client_home_view.dart';
 import 'package:relier/ui/views/professional_home_view.dart';
 import 'package:relier/ui/views/user_type_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../ui/views/client_service_history_view.dart';
+import '../../ui/views/professional_service_history_view.dart';
+import '../../ui/views/profile_view.dart';
+import '../../ui/widgets/custom_navbar_view.dart';
 
 class LoginViewModel extends ChangeNotifier {
   bool _obscureText = true;
@@ -54,11 +60,20 @@ class LoginViewModel extends ChangeNotifier {
 
       if (response.statusCode != 200) {
         _errorLogin = true;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Email ou senha inválidos',
+            ),
+          ),
+        );
       } else {
         final responseBody = jsonDecode(response.body);
         _errorLogin = false;
         prefs.setBool('first_access', false);
         prefs.setString('token', responseBody['token']);
+
+        prefs.setString('name', responseBody['user']['firstName']);
 
         final isProfessional = responseBody['user']['isProfissional'];
         prefs.setString('userType', isProfessional ? 'professional' : 'client');
@@ -69,15 +84,35 @@ class LoginViewModel extends ChangeNotifier {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (contextNew) => isProfessional
-                ? const ProfessionalHomeView()
-                : const ClientHomeView(),
+            builder: (context) => CustomNavbarView(
+              pages: isProfessional
+                  ? const [
+                      ProfessionalHomeView(),
+                      ProfessionalServiceHistoryView(),
+                      ProfileView(),
+                    ]
+                  : const [
+                      ClientHomeView(),
+                      ClientServiceHistoryView(),
+                      ProfileView(),
+                    ],
+              navItems: isProfessional
+                  ? const [
+                      GButton(icon: Icons.home_outlined, text: 'Dashboard'),
+                      GButton(icon: Icons.work_outline, text: 'Serviços'),
+                      GButton(icon: Icons.person_outline, text: 'Perfil'),
+                    ]
+                  : const [
+                      GButton(icon: Icons.home_outlined, text: 'Início'),
+                      GButton(icon: Icons.wallet_outlined, text: 'Histórico'),
+                      GButton(icon: Icons.person_outline, text: 'Perfil'),
+                    ],
+            ),
           ),
         );
       }
     } catch (e) {
       _errorLogin = true;
-      print("Erro no login: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

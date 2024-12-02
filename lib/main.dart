@@ -11,7 +11,6 @@ import 'package:relier/core/viewmodels/splash_viewmodel.dart';
 import 'package:relier/core/viewmodels/third_professional_registration_viewmodel.dart';
 import 'package:relier/core/viewmodels/user_type_viewmodel.dart';
 import 'package:relier/ui/views/splash_view.dart';
-import 'package:relier/ui/views/user_type_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,7 +47,7 @@ class MyApp extends StatelessWidget {
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
-          home: const UserTypeView()),
+          home: const SplashView()),
     );
   }
 }
