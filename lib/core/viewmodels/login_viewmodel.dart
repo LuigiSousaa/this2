@@ -73,7 +73,22 @@ class LoginViewModel extends ChangeNotifier {
         prefs.setBool('first_access', false);
         prefs.setString('token', responseBody['token']);
 
+        prefs.setString('id_user', responseBody['user']['id']);
         prefs.setString('name', responseBody['user']['firstName']);
+        prefs.setString('lastName', responseBody['user']['lastName']);
+        prefs.setString('email', responseBody['user']['email']);
+        prefs.setString('password', passwordController.text);
+        prefs.setString('celular', responseBody['user']['celular']);
+        prefs.setString('cpf', responseBody['user']['cliente']['cpf']);
+        prefs.setString('genero', responseBody['user']['cliente']['genero']);
+        prefs.setString('logradouro', responseBody['user']['cliente']['logradouro']);
+        prefs.setString('bairro', responseBody['user']['cliente']['bairro']);
+        prefs.setString('numero', responseBody['user']['cliente']['numero']);
+        prefs.setString('cep', responseBody['user']['cliente']['cep']);
+        prefs.setString('cidade', responseBody['user']['cliente']['cidade']);
+        prefs.setString('estado', responseBody['user']['cliente']['estado']);
+        prefs.setString('pais', responseBody['user']['cliente']['pais']);
+        prefs.setString('complemento', responseBody['user']['cliente']['complemento']);
 
         final isProfessional = responseBody['user']['isProfissional'];
         prefs.setString('userType', isProfessional ? 'professional' : 'client');

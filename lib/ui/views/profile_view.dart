@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:relier/ui/views/login_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -69,7 +71,7 @@ class _ProfileViewState extends State<ProfileView> {
                     child: Icon(
                       Icons.person,
                       size: 120,
-                      color: Color(0xFF1F1F1F),
+                      color: Color(0xFF5077FF),
                     ),
                   ),
                 ),
@@ -91,7 +93,7 @@ class _ProfileViewState extends State<ProfileView> {
                     children: [
                       buildTextField("Celular", userInfo["celular"]),
                       IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.grey),
+                        icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
                         onPressed: () {
                           // Navegar para tela de edição
                         },
@@ -104,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
                     children: [
                       buildTextField("Password", userInfo["password"]),
                       IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.grey),
+                        icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
                         onPressed: () {
                           // Navegar para tela de edição
                         },
@@ -122,7 +124,38 @@ class _ProfileViewState extends State<ProfileView> {
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? idUsuario = prefs.getString('id_user');
+
+                if (idUsuario != null) {
+                  final response = await http.post(
+                    Uri.parse('https://url/api/logout/$idUsuario'),
+                  );
+
+                  if (response.statusCode == 200) {
+                    await prefs.remove('id_user');
+                    prefs.setBool('first_access', true);
+                    await prefs.remove('userType');
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Logout realizado com sucesso!')),
+                    );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (contextNew) => const LoginView(),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Erro ao realizar o logout!')),
+                    );
+                  }
+                }
+              },
               child: const Text(
                 'Sair',
                 style: TextStyle(color: Colors.red),
@@ -166,7 +199,7 @@ class _ProfileViewState extends State<ProfileView> {
             children: [
               buildTextField("Logradouro", userInfo["logradouro"]),
               IconButton(
-                icon: const Icon(Icons.edit, color: Colors.grey),
+                icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
                 onPressed: () {
                   // Navegar para tela de edição
                 },
