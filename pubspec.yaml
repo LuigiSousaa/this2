@@ -70,6 +70,7 @@ flutter:
     - assets/images/help_qat/
     - assets/images/help_pe/
     - assets/images/help_ec/
+    - assets/images/client_home/
 #    - assets/icons/common/
 #    - assets/fonts/
 #    - assets/animations/

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relier/core/viewmodels/client_home_viewmodel.dart';
 import 'package:relier/core/viewmodels/client_registration_viewmodel.dart';
+import 'package:relier/core/viewmodels/custom_navbar_viewmodel.dart';
 import 'package:relier/core/viewmodels/help_easy_communication_viewmodel.dart';
 import 'package:relier/core/viewmodels/help_viewmodel.dart';
 import 'package:relier/core/viewmodels/login_viewmodel.dart';
@@ -28,22 +30,19 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HelpEasyCommunicationViewmodel()),
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ClientRegistrationViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => SecondClientRegistrationViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => ProfessionalRegistrationViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => SecondProfessionalRegistrationViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => ThirdProfessionalRegistrationViewModel()),
-        ChangeNotifierProvider(
-            create: (_) => UserTypeViewModel()),
+        ChangeNotifierProvider(create: (_) => SecondClientRegistrationViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfessionalRegistrationViewModel()),
+        ChangeNotifierProvider(create: (_) => SecondProfessionalRegistrationViewModel()),
+        ChangeNotifierProvider(create: (_) => ThirdProfessionalRegistrationViewModel()),
+        ChangeNotifierProvider(create: (_) => UserTypeViewModel()),
+        ChangeNotifierProvider(create: (_) => CustomNavbarViewModel()),
+        ChangeNotifierProvider(create: (_) => ClientHomeViewModel()),
       ],
       child: MaterialApp(
           title: 'Relier',
           theme: ThemeData(
             colorScheme:
-                ColorScheme.fromSeed(seedColor: const Color(0xFF5077FF)),
+            ColorScheme.fromSeed(seedColor: const Color(0xFF5077FF)),
             useMaterial3: true,
           ),
           debugShowCheckedModeBanner: false,
