@@ -1,20 +1,22 @@
 # Relier - Conectando Clientes e Profissionais 🤝
 
-O Relier é um aplicativo móvel que facilita a conexão entre clientes que precisam de serviços e profissionais qualificados para realizá-los.  Oferecemos uma plataforma segura e eficiente para encontrar, contratar e gerenciar serviços, com foco em transparência, confiança e qualidade. ✨
+O Relier é um aplicativo móvel que facilita a conexão entre clientes que precisam de serviços e
+profissionais qualificados para realizá-los. Oferecemos uma plataforma segura e eficiente para
+encontrar, contratar e gerenciar serviços, com foco em transparência, confiança e qualidade. ✨
 
 ## Funcionalidades
 
 * **Para Clientes:** 👨‍💼
-  * Busca de profissionais por categoria, localização e avaliação 🔎
-  * Visualização de perfis detalhados de profissionais 👤
-  * Solicitação de serviços com descrição detalhada do problema 📝
-  * Acompanhamento do status do serviço 🔄
-  * Histórico de serviços contratados 📜
+    * Busca de profissionais por categoria, localização e avaliação 🔎
+    * Visualização de perfis detalhados de profissionais 👤
+    * Solicitação de serviços com descrição detalhada do problema 📝
+    * Acompanhamento do status do serviço 🔄
+    * Histórico de serviços contratados 📜
 * **Para Profissionais:** 🛠️
-  * Criação de perfil profissional completo 📝
-  * Recebimento de solicitações de serviço 🔔
-  * Gerenciamento de agenda e disponibilidade 📅
-  * Acompanhamento de pagamentos 💰
+    * Criação de perfil profissional completo 📝
+    * Recebimento de solicitações de serviço 🔔
+    * Gerenciamento de agenda e disponibilidade 📅
+    * Acompanhamento de pagamentos 💰
 
 ## Tecnologias Utilizadas
 
@@ -26,10 +28,10 @@ O Relier é um aplicativo móvel que facilita a conexão entre clientes que prec
 * **Backend:** PHP com Laravel
 * **Banco de Dados:** PostgreSQL
 
-
 ## Arquitetura
 
-O aplicativo utiliza a arquitetura MVVM (Model-View-ViewModel) para garantir a separação de responsabilidades, facilitar a testabilidade e a manutenção do código.  🧱
+O aplicativo utiliza a arquitetura MVVM (Model-View-ViewModel) para garantir a separação de
+responsabilidades, facilitar a testabilidade e a manutenção do código. 🧱
 
 ## Como Rodar o Projeto 🚀
 
@@ -37,18 +39,17 @@ O aplicativo utiliza a arquitetura MVVM (Model-View-ViewModel) para garantir a s
    git clone https://github.com/TeamRelier/relier.git
 
 2. **Instale as dependências:**
-  flutter pub get
+   flutter pub get
 
 3. **Execute o aplicativo:**
-  flutter run
-
-## Contribuindo 🙌
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+   flutter run
 
 ## Equipe 👥
+
 - Luigi Sousa - https://github.com/LuigiSousaa
 - Igor Oliveira - https://github.com/IgorOliverx
 - Ezequiel Samuel - https://github.com/Ezequielzz
 
 ## Contato ✉️
-  suporte.relier@gmail.com
+
+suporte.relier@gmail.com
