@@ -68,7 +68,7 @@ class ProfileViewModel extends ChangeNotifier {
 
       if (idUsuario != null) {
         final response = await http.post(
-          Uri.parse('https://url/api/logout/$idUsuario'),
+          Uri.parse('https://dolphin-app-4vryx.ondigitalocean.app/api/logout/$idUsuario'),
         );
 
         if (response.statusCode == 200) {

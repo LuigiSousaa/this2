@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:relier/ui/views/first_task_post_view.dart';
+import 'package:relier/ui/views/second_task_post_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ClientHomeViewModel extends ChangeNotifier {
@@ -12,23 +13,29 @@ class ClientHomeViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> get cardData => [
         {
-          'icon': Icons.construction,
-          'color': Colors.blue[600],
-          'label': 'Construções\n& Obras'
+          'image': 'assets/images/client_home/constructions_and_works.png',
+          'label': 'Construções\n& Obras',
         },
         {
-          'icon': Icons.plumbing,
-          'color': Colors.blue[600],
-          'label': 'Encanamento'
+          'image': 'assets/images/client_home/plumbing.png',
+          'label': 'Encanamento',
         },
-        {'icon': Icons.eco, 'color': Colors.blue[600], 'label': 'Jardinagem'},
         {
-          'icon': Icons.format_paint,
-          'color': Colors.blue[600],
-          'label': 'Pinturas'
+          'image': 'assets/images/client_home/gardening.png',
+          'label': 'Jardinagem',
         },
-        {'icon': Icons.bolt, 'color': Colors.blue[600], 'label': 'Elétrica'},
-        {'icon': Icons.layers, 'color': Colors.blue[600], 'label': 'Outros'},
+        {
+          'image': 'assets/images/client_home/painting.png',
+          'label': 'Pinturas',
+        },
+        {
+          'image': 'assets/images/client_home/electrical.png',
+          'label': 'Elétrica',
+        },
+        {
+          'image': 'assets/images/client_home/other.png',
+          'label': 'Outro',
+        },
       ];
 
   Future<void> getName() async {
@@ -44,6 +51,15 @@ class ClientHomeViewModel extends ChangeNotifier {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const FirstTaskPostView()),
+    );
+  }
+
+  void navigateToSecondTaskPost(BuildContext context,
+      {required String specialty}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SecondTaskPostView(specialty: specialty)),
     );
   }
 }

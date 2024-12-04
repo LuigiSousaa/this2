@@ -98,10 +98,29 @@ class ClientHomeViewState extends State<ClientHomeView> {
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
                           onTap: () {
-                            if (viewModel.cardData[index]['label'] ==
-                                'Encanamento') {
+                            if (viewModel.cardData[index]['label'] == 'Outro') {
                               viewModel.navigateToTaskPost(context);
-                            } else {}
+                            } else if (viewModel.cardData[index]['label'] ==
+                                'Construções\n& Obras') {
+                              viewModel.navigateToSecondTaskPost(context,
+                                  specialty: 'construcao_civil');
+                            } else if (viewModel.cardData[index]['label'] ==
+                                'Encanamento') {
+                              viewModel.navigateToSecondTaskPost(context,
+                                  specialty: 'encanamento');
+                            } else if (viewModel.cardData[index]['label'] ==
+                                'Jardinagem') {
+                              viewModel.navigateToSecondTaskPost(context,
+                                  specialty: 'jardinagem');
+                            } else if (viewModel.cardData[index]['label'] ==
+                                'Pinturas') {
+                              viewModel.navigateToSecondTaskPost(context,
+                                  specialty: 'pintura');
+                            } else if (viewModel.cardData[index]['label'] ==
+                                'Elétrica') {
+                              viewModel.navigateToSecondTaskPost(context,
+                                  specialty: 'eletrica');
+                            }
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -114,10 +133,11 @@ class ClientHomeViewState extends State<ClientHomeView> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    viewModel.cardData[index]['icon'],
-                                    color: viewModel.cardData[index]['color'],
-                                    size: 40,
+                                  child: Image.asset(
+                                    viewModel.cardData[index]['image'],
+                                    width: 35,
+                                    height: 35,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                                 Padding(
