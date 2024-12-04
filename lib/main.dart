@@ -7,6 +7,7 @@ import 'package:relier/core/viewmodels/help_easy_communication_viewmodel.dart';
 import 'package:relier/core/viewmodels/help_viewmodel.dart';
 import 'package:relier/core/viewmodels/login_viewmodel.dart';
 import 'package:relier/core/viewmodels/professional_registration_viewmodel.dart';
+import 'package:relier/core/viewmodels/profile_viewmodel.dart';
 import 'package:relier/core/viewmodels/second_client_registration_viewmodel.dart';
 import 'package:relier/core/viewmodels/second_professional_registration_viewmodel.dart';
 import 'package:relier/core/viewmodels/splash_viewmodel.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserTypeViewModel()),
         ChangeNotifierProvider(create: (_) => CustomNavbarViewModel()),
         ChangeNotifierProvider(create: (_) => ClientHomeViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
       ],
       child: MaterialApp(
           title: 'Relier',

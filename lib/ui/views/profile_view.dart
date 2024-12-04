@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:relier/ui/views/login_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:relier/core/viewmodels/profile_viewmodel.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -11,38 +10,22 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  final Map<String, String> userInfo = {};
-
   @override
   void initState() {
     super.initState();
-    _loadUserInfo();
-  }
-
-  Future<void> _loadUserInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      userInfo["firstName"] = prefs.getString("firstName") ?? "";
-      userInfo["lastName"] = prefs.getString("lastName") ?? "";
-      userInfo["email"] = prefs.getString("email") ?? "";
-      userInfo["password"] = prefs.getString("password") ?? "";
-      userInfo["celular"] = prefs.getString("celular") ?? "";
-      userInfo["cpf"] = prefs.getString("cpf") ?? "";
-      userInfo["genero"] = prefs.getString("genero") ?? "";
-      userInfo["logradouro"] = prefs.getString("logradouro") ?? "";
-      userInfo["bairro"] = prefs.getString("bairro") ?? "";
-      userInfo["numero"] = prefs.getString("numero") ?? "";
-      userInfo["cep"] = prefs.getString("cep") ?? "";
-      userInfo["cidade"] = prefs.getString("cidade") ?? "";
-      userInfo["estado"] = prefs.getString("estado") ?? "";
-      userInfo["pais"] = prefs.getString("pais") ?? "";
-      userInfo["complemento"] = prefs.getString("complemento") ?? "";
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProfileViewModel>(context, listen: false).loadUserInfo();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<ProfileViewModel>(context);
+
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFF292929),
       body: SingleChildScrollView(
@@ -82,21 +65,19 @@ class _ProfileViewState extends State<ProfileView> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 children: [
-                  buildTextField("First Name", userInfo["firstName"]),
+                  buildTextField("First Name", viewModel.userInfo["firstName"]),
                   const SizedBox(height: 10),
-                  buildTextField("Last Name", userInfo["lastName"]),
+                  buildTextField("Last Name", viewModel.userInfo["lastName"]),
                   const SizedBox(height: 10),
-                  buildTextField("Email", userInfo["email"]),
+                  buildTextField("Email", viewModel.userInfo["email"]),
                   const SizedBox(height: 10),
                   Stack(
                     alignment: Alignment.centerRight,
                     children: [
-                      buildTextField("Celular", userInfo["celular"]),
+                      buildTextField("Celular", viewModel.userInfo["celular"]),
                       IconButton(
                         icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
-                        onPressed: () {
-                          // Navegar para tela de edição
-                        },
+                        onPressed: () => viewModel.navigateToEditPhone(context),
                       ),
                     ],
                   ),
@@ -104,58 +85,25 @@ class _ProfileViewState extends State<ProfileView> {
                   Stack(
                     alignment: Alignment.centerRight,
                     children: [
-                      buildTextField("Password", userInfo["password"]),
+                      buildTextField("Password", viewModel.userInfo["password"]),
                       IconButton(
                         icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
-                        onPressed: () {
-                          // Navegar para tela de edição
-                        },
+                        onPressed: () => viewModel.navigateToEditPassword(context),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  buildTextField("CPF", userInfo["cpf"]),
+                  buildTextField("CPF", viewModel.userInfo["cpf"]),
                   const SizedBox(height: 10),
-                  buildTextField("Gênero", userInfo["genero"]),
+                  buildTextField("Gênero", viewModel.userInfo["genero"]),
                   const SizedBox(height: 20),
-                  buildAddressSection(),
+                  buildAddressSection(viewModel),
                 ],
               ),
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? idUsuario = prefs.getString('id_user');
-
-                if (idUsuario != null) {
-                  final response = await http.post(
-                    Uri.parse('https://url/api/logout/$idUsuario'),
-                  );
-
-                  if (response.statusCode == 200) {
-                    await prefs.remove('id_user');
-                    prefs.setBool('first_access', true);
-                    await prefs.remove('userType');
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Logout realizado com sucesso!')),
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (contextNew) => const LoginView(),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Erro ao realizar o logout!')),
-                    );
-                  }
-                }
-              },
+              onPressed: () => viewModel.logout(context),
               child: const Text(
                 'Sair',
                 style: TextStyle(color: Colors.red),
@@ -185,7 +133,7 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  Widget buildAddressSection() {
+  Widget buildAddressSection(ProfileViewModel viewModel) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -197,29 +145,27 @@ class _ProfileViewState extends State<ProfileView> {
           Stack(
             alignment: Alignment.centerRight,
             children: [
-              buildTextField("Logradouro", userInfo["logradouro"]),
+              buildTextField("Logradouro", viewModel.userInfo["logradouro"]),
               IconButton(
                 icon: const Icon(Icons.edit, color: Color(0xFF5077FF)),
-                onPressed: () {
-                  // Navegar para tela de edição
-                },
+                onPressed: () => viewModel.navigateToEditAddress(context),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          buildTextField("Bairro", userInfo["bairro"]),
+          buildTextField("Bairro", viewModel.userInfo["bairro"]),
           const SizedBox(height: 10),
-          buildTextField("Número", userInfo["numero"]),
+          buildTextField("Número", viewModel.userInfo["numero"]),
           const SizedBox(height: 10),
-          buildTextField("CEP", userInfo["cep"]),
+          buildTextField("CEP", viewModel.userInfo["cep"]),
           const SizedBox(height: 10),
-          buildTextField("Cidade", userInfo["cidade"]),
+          buildTextField("Cidade", viewModel.userInfo["cidade"]),
           const SizedBox(height: 10),
-          buildTextField("Estado", userInfo["estado"]),
+          buildTextField("Estado", viewModel.userInfo["estado"]),
           const SizedBox(height: 10),
-          buildTextField("País", userInfo["pais"]),
+          buildTextField("País", viewModel.userInfo["pais"]),
           const SizedBox(height: 10),
-          buildTextField("Complemento", userInfo["complemento"]),
+          buildTextField("Complemento", viewModel.userInfo["complemento"]),
         ],
       ),
     );
