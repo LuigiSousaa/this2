@@ -41,6 +41,7 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   http: ^1.2.2
   google_nav_bar: ^5.0.7
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +71,10 @@ flutter:
     - assets/images/help_qat/
     - assets/images/help_pe/
     - assets/images/help_ec/
+    - assets/images/second_tp/
+    - assets/images/fourth_tp/
     - assets/images/client_home/
+    - assets/images/posted_task/
     - assets/images/profile/
 #    - assets/icons/common/
 #    - assets/fonts/

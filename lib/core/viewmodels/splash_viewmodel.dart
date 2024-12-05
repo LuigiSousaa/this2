@@ -62,7 +62,7 @@ class SplashViewModel extends ChangeNotifier {
                   ],
                   navItems:  [
                     GButton(icon: Icons.home_outlined, text: 'Dashboard'),
-                    GButton(icon: Icons.work_outline, text: 'Serviços'),
+                    GButton(icon: Icons.chat, text: 'Conversas'),
                     GButton(icon: Icons.person_outline, text: 'Perfil'),
                   ],
                 ),

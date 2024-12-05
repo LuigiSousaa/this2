@@ -73,25 +73,55 @@ class LoginViewModel extends ChangeNotifier {
         prefs.setBool('first_access', false);
         prefs.setString('token', responseBody['token']);
 
-        prefs.setString('id_user', responseBody['user']['id']);
+        // prefs.setString('user_id', responseBody['user'][0]);
         prefs.setString('name', responseBody['user']['firstName']);
         prefs.setString('lastName', responseBody['user']['lastName']);
         prefs.setString('email', responseBody['user']['email']);
         prefs.setString('password', passwordController.text);
         prefs.setString('celular', responseBody['user']['celular']);
-        prefs.setString('cpf', responseBody['user']['cliente']['cpf']);
-        prefs.setString('genero', responseBody['user']['cliente']['genero']);
-        prefs.setString('logradouro', responseBody['user']['cliente']['logradouro']);
-        prefs.setString('bairro', responseBody['user']['cliente']['bairro']);
-        prefs.setString('numero', responseBody['user']['cliente']['numero']);
-        prefs.setString('cep', responseBody['user']['cliente']['cep']);
-        prefs.setString('cidade', responseBody['user']['cliente']['cidade']);
-        prefs.setString('estado', responseBody['user']['cliente']['estado']);
-        prefs.setString('pais', responseBody['user']['cliente']['pais']);
-        prefs.setString('complemento', responseBody['user']['cliente']['complemento']);
 
         final isProfessional = responseBody['user']['isProfissional'];
-        prefs.setString('userType', isProfessional ? 'professional' : 'client');
+
+        String cep = responseBody['user']['isProfissional']
+            ? responseBody['user']['profissional']['cep']
+            : responseBody['user']['cliente']['cep'];
+
+        cep = formatCep(cep);
+
+        if (isProfessional) {
+          prefs.setString('userType', 'professional');
+          prefs.setString('cpf', responseBody['user']['profissional']['cpf']);
+          prefs.setString(
+              'genero', responseBody['user']['profissional']['genero']);
+          prefs.setString(
+              'logradouro', responseBody['user']['profissional']['logradouro']);
+          prefs.setString(
+              'bairro', responseBody['user']['profissional']['bairro']);
+          prefs.setString(
+              'numero', responseBody['user']['profissional']['numero']);
+          prefs.setString('cep', cep);
+          prefs.setString(
+              'cidade', responseBody['user']['profissional']['cidade']);
+          prefs.setString(
+              'estado', responseBody['user']['profissional']['estado']);
+          prefs.setString('pais', responseBody['user']['profissional']['pais']);
+          prefs.setString('complemento',
+              responseBody['user']['profissional']['complemento']);
+        } else {
+          prefs.setString('userType', 'client');
+          prefs.setString('cpf', responseBody['user']['cliente']['cpf']);
+          prefs.setString('genero', responseBody['user']['cliente']['genero']);
+          prefs.setString(
+              'logradouro', responseBody['user']['cliente']['logradouro']);
+          prefs.setString('bairro', responseBody['user']['cliente']['bairro']);
+          prefs.setString('numero', responseBody['user']['cliente']['numero']);
+          prefs.setString('cep', cep);
+          prefs.setString('cidade', responseBody['user']['cliente']['cidade']);
+          prefs.setString('estado', responseBody['user']['cliente']['estado']);
+          prefs.setString('pais', responseBody['user']['cliente']['pais']);
+          prefs.setString(
+              'complemento', responseBody['user']['cliente']['complemento']);
+        }
 
         emailController.clear();
         passwordController.clear();
@@ -114,7 +144,7 @@ class LoginViewModel extends ChangeNotifier {
               navItems: isProfessional
                   ? const [
                       GButton(icon: Icons.home_outlined, text: 'Dashboard'),
-                      GButton(icon: Icons.work_outline, text: 'Serviços'),
+                      GButton(icon: Icons.chat, text: 'Conversas'),
                       GButton(icon: Icons.person_outline, text: 'Perfil'),
                     ]
                   : const [
@@ -132,5 +162,12 @@ class LoginViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  String formatCep(String cep) {
+    if (cep.length == 8) {
+      return '${cep.substring(0, 5)}-${cep.substring(5, 8)}';
+    }
+    return cep;
   }
 }
